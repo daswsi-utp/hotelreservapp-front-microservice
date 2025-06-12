@@ -59,12 +59,7 @@ This project is a web application built with **React.js** that allows users to b
 
 | Name                              | User Github     |
 | --------------------------------- | --------------- |
-|Harold Alexis Espinoza Mayhuire    | Haem807         |
-|Carlos Eiral Llallacachi Ventura   | carlos23elv     |
-|Winsthon William Apaza Mamani      | winsthonapazamamani |
 |Rodney Piers Salazar Arapa         | R0dn3           |
-|Yamely Machacca Zenayuca           | U20309396       |
-|Hebert Leonel Huanca Araujo        | leonelha        |
 
 
 
