@@ -2,26 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import Button from '../../components/common/Button';
-import { promotions, rooms } from '../../data/roomsData';
+import Promotion from "../../../service/gatewayApi.ts";
+import { getAllPromotions } from "../../../service/gatewayApi.ts"; 
 
 const PromotionsPage = () => {
+  //Defines the base promotions to be fetch from the DB
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [filteredPromotions, setFilteredPromotions] = useState(promotions);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddPromotion, setShowAddPromotion] = useState(false);
   const [newPromotion, setNewPromotion] = useState({
-    title: '',
+    name: '',
     description: '',
-    discountType: 'percentage',
+    type: 'percentage',
     discountValue: '',
     startDate: format(new Date(), 'yyyy-MM-dd'),
     endDate: format(new Date(new Date().setMonth(new Date().getMonth() + 1)), 'yyyy-MM-dd'),
     applicableRooms: 'all',
     applicableRoomIds: [],
     minStay: 1,
-    status: 'active'
   });
-  
+  //Fetches the data
+  useEffect(() =>{
+    const fetchPromotions = async() =>{
+      try {
+        const data = await Promotion.getAllPromotions();
+        setPromotions(data);
+      } catch (error) {
+        console.error("Failed to load promotions", error);
+
+      }
+    }
+  }, []);
+
+  filteredPromotions = promotions;
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -31,14 +46,14 @@ const PromotionsPage = () => {
     // Filter by search term
     if (value) {
       filtered = filtered.filter(promo => 
-        promo.title.toLowerCase().includes(value.toLowerCase()) ||
+        promo.name.toLowerCase().includes(value.toLowerCase()) ||
         promo.description.toLowerCase().includes(value.toLowerCase())
       );
     }
     
     // Filter by status
     if (filter !== 'all') {
-      filtered = filtered.filter(promo => promo.status === filter);
+      filtered = filtered.filter(promo => promo.isActive === filter);
     }
     
     setFilteredPromotions(filtered);
@@ -52,14 +67,14 @@ const PromotionsPage = () => {
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(promo => 
-        promo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        promo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         promo.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
     // Filter by status
     if (newFilter !== 'all') {
-      filtered = filtered.filter(promo => promo.status === newFilter);
+      filtered = filtered.filter(promo => promo.isActive === newFilter);
     }
     
     setFilteredPromotions(filtered);
@@ -68,10 +83,10 @@ const PromotionsPage = () => {
   const handleToggleStatus = (id) => {
     // Toggle promotion status
     const updatedPromotions = filteredPromotions.map(promo => {
-      if (promo.id === id) {
+      if (promo.promotionId === id) {
         return {
           ...promo,
-          status: promo.status === 'active' ? 'inactive' : 'active'
+          status: promo.isActive === true ? false : true
         };
       }
       return promo;
@@ -107,7 +122,6 @@ const PromotionsPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Simple validation
     if (!newPromotion.title || !newPromotion.description || !newPromotion.startDate || !newPromotion.endDate) {
       alert('Please fill in all required fields.');
       return;
@@ -563,9 +577,9 @@ const PromotionsPage = () => {
             </thead>
             <tbody>
               {filteredPromotions.map((promo) => (
-                <tr key={promo.id}>
+                <tr key={promo.promotionId}>
                   <td style={promotionsStyles.tableCell}>
-                    <div style={{ fontWeight: 600 }}>{promo.title}</div>
+                    <div style={{ fontWeight: 600 }}>{promo.name}</div>
                     <div style={{ fontSize: '0.85rem', color: '#666666' }}>{promo.description.substring(0, 60)}...</div>
                   </td>
                   <td style={promotionsStyles.tableCell}>
@@ -586,10 +600,10 @@ const PromotionsPage = () => {
                     <span 
                       style={{
                         ...promotionsStyles.statusBadge,
-                        ...(promo.status === 'active' ? promotionsStyles.statusActive : promotionsStyles.statusInactive)
+                        ...(promo.isActive === true ? promotionsStyles.isActive : promotionsStyles.statusInactive)
                       }}
                     >
-                      {promo.status.charAt(0).toUpperCase() + promo.status.slice(1)}
+                      {promo.isActive.charAt(0).toUpperCase() + promo.isActive.slice(1)}
                     </span>
                   </td>
                   <td style={promotionsStyles.tableCell}>
@@ -606,12 +620,12 @@ const PromotionsPage = () => {
                       <button 
                         style={{
                           ...promotionsStyles.actionButton,
-                          borderColor: promo.status === 'active' ? '#EF4444' : '#05965A',
-                          color: promo.status === 'active' ? '#EF4444' : '#05965A',
+                          borderColor: promo.isActive === true ? '#EF4444' : '#05965A',
+                          color: promo.isActive === true ? '#EF4444' : '#05965A',
                         }}
-                        onClick={() => handleToggleStatus(promo.id)}
+                        onClick={() => handleToggleStatus(promo.promotionId)}
                       >
-                        {promo.status === 'active' ? 'Deactivate' : 'Activate'}
+                        {promo.isActive === true ? 'Deactivate' : 'Activate'}
                       </button>
                     </div>
                   </td>
