@@ -13,6 +13,7 @@ export interface Promotion{
   type: string;
   isActive: boolean;
   minStay: number;
+  roomApplicability: string;
 }
 export interface Room{
   roomId: number;
@@ -25,5 +26,9 @@ export const getAllPromotions = async(): Promise<Promotion[]> =>{
 }
 export const searchPromotionsByName = async(string name): Promise<Promotion[]> =>{
   const res  = await axios.get<Promotion[]>(`${GATEWAY_URL}/api/promotions/name/${name}`);
+  return res.data;
+}
+export const searchPromotionsByNameAndIsActive = async(string name, boolean isActive) : Promise<Promotion[]> =>{
+  const res = await axios.get<Promotion[]>(`${GATEWAY_URL}/api/promotions/find?name=${name}&isActive=${isActive}`);
   return res.data;
 }
