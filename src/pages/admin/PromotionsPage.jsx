@@ -12,6 +12,7 @@ const PromotionsPage = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddPromotion, setShowAddPromotion] = useState(false);
+//  const [newPromotion, setNewPromotion] = useState<PromotionRequest>();
   const [newPromotion, setNewPromotion] = useState({
     name: '',
     description: '',
@@ -486,13 +487,13 @@ const PromotionsPage = () => {
                   <div style={promotionsStyles.roomsGrid}>
                     {rooms.map(room => (
                       <label 
-                        key={room.id} 
+                        key={room.roomId} 
                         style={promotionsStyles.roomCheckboxLabel}
                       >
                         <input 
                           type="checkbox" 
-                          checked={newPromotion.applicableRoomIds.includes(room.id)}
-                          onChange={() => handleRoomSelectionChange(room.id)}
+                          checked={newPromotion.applicableRoomIds.includes(room.roomId)}
+                          onChange={() => handleRoomSelectionChange(room.roomId)}
                         />
                         {room.name}
                       </label>

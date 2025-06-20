@@ -48,11 +48,19 @@ export const searchPromotionsByName = async(name: string): Promise<Promotion[]> 
   const res  = await axios.get<Promotion[]>(`${GATEWAY_URL}/api/promotions/name/${name}`);
   return res.data;
 }
-<<<<<<< HEAD
 export const searchPromotionByNameAndOrStatus = async(name?: string, isActive?: boolean): Promise<Promotion[]> =>{
   const params: any = {};
   if(name) params.name = name;
   if(isActive !== undefined) params.isActive = isActive;
-  const res = await axios.get<Promotion[]>(`${GATEWAY_URL}/api/promotions/name`, {params});
+  const res = await axios.get<Promotion[]>(`${GATEWAY_URL}/api/promotions/find`, {params});
   return res.data;
 }
+export const savePromotionRequest = async(promotion: PromotionRequest): =>{
+  cons res = await axios.post(`${GATEWAY_URL}/api/promotion/save`, promotion);
+  return res.data;
+}
+export const updatePromotion = async(id: number, promotion: PromotionRequest): => {
+  cons res = await axios.put(`${GATEWAY_URL}/api/promotion/update/${id}`, promotion);
+  return res.data;
+}
+
