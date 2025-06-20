@@ -48,6 +48,7 @@ export const searchPromotionsByName = async(name: string): Promise<Promotion[]> 
   const res  = await axios.get<Promotion[]>(`${GATEWAY_URL}/api/promotions/name/${name}`);
   return res.data;
 }
+<<<<<<< HEAD
 export const searchPromotionByNameAndOrStatus = async(name?: string, isActive?: boolean): Promise<Promotion[]> =>{
   const params: any = {};
   if(name) params.name = name;
