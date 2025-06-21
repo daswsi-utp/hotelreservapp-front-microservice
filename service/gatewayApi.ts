@@ -18,7 +18,7 @@ export interface Promotion{
   isActive: boolean;
   minStay: number;
   roomApplicability: RoomApplicability;
-  rooms: Room[];
+  rooms: PromotionRoom[];
 }
 
 //Promotion to be registered or updated
@@ -35,9 +35,14 @@ export interface PromotionRequest{
   roomsIds: number[];
 }
 
-export interface Room{
+export interface PromotionRoom{
   roomId: number;
   name: string;
+}
+
+export interface Room{
+  roomId: number;
+  number: number;
 }
 
 export const getAllPromotions = async(): Promise<Promotion[]> =>{
@@ -64,3 +69,4 @@ export const updatePromotion = async(id: number, promotion: PromotionRequest): =
   return res.data;
 }
 
+export const getAllRooms = async(): Promise<Room

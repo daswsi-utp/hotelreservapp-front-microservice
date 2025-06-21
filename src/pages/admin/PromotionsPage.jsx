@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import Button from '../../components/common/Button';
-import Promotion from "../../../service/gatewayApi.ts";
+import { Promotion } from "../../../service/gatewayApi.ts";
 import { getAllPromotions } from "../../../service/gatewayApi.ts"; 
+import { PromotionRequest } from "../../../service/gatewayApi.ts";
+import { searchPromotionByNameAndOrStatus } from "../../../service/gatewayApi.ts";
+import { PromotionType } from "../../../service/gatewayApi.ts";
+import { RoomApplicability } from "../../../service/gatewayApi.ts";
+import { Room } from "../../../service/gatewayApi.ts";
 
 const PromotionsPage = () => {
   //Defines the base promotions to be fetch from the DB
@@ -12,6 +17,8 @@ const PromotionsPage = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddPromotion, setShowAddPromotion] = useState(false);
+  //TODO: ADD ENDPOINT CALL TO THE ROOM MICROSERVICE TO FECTH THE DATA
+  const [rooms, setRooms] = useState<Room[]>([]);
 //  const [newPromotion, setNewPromotion] = useState<PromotionRequest>();
   const [newPromotion, setNewPromotion] = useState({
     name: '',
@@ -30,11 +37,12 @@ const PromotionsPage = () => {
       try {
         const data = await Promotion.getAllPromotions();
         setPromotions(data);
+        setRooms(promotions.rooms)
       } catch (error) {
         console.error("Failed to load promotions", error);
-
       }
-    }
+    };
+    fetchPromotions();
   }, []);
 
   filteredPromotions = promotions;
@@ -595,7 +603,7 @@ const PromotionsPage = () => {
                     {promo.minStay} {promo.minStay === 1 ? 'night' : 'nights'}
                   </td>
                   <td style={promotionsStyles.tableCell}>
-                    {promo.applicableRooms === 'all' ? 'All rooms' : `${promo.applicableRoomIds?.length || 0} rooms`}
+                    {promo.roomApplicabilty === RoomApplicability.all ? 'All rooms' : `${promo.rooms?.length || 0} rooms`}
                   </td>
                   <td style={promotionsStyles.tableCell}>
                     <span 
@@ -604,7 +612,7 @@ const PromotionsPage = () => {
                         ...(promo.isActive === true ? promotionsStyles.isActive : promotionsStyles.statusInactive)
                       }}
                     >
-                      {promo.isActive.charAt(0).toUpperCase() + promo.isActive.slice(1)}
+                      {promo.isActive === true ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td style={promotionsStyles.tableCell}>
